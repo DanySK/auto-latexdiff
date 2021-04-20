@@ -54,7 +54,8 @@ for latex_root in latex_roots
         .map { |it| it.gsub(/^refs\/tags\/(.+)\^\{\}$/, '\1') }
     puts "detected tags #{tags} for file #{latex_root}"
     for tag in tags
-        output = "#{local_directory}/#{file.gsub('.tex', '')}-wrt-#{tag}.pdf"
+        output_file = "#{file.gsub('.tex', '')}-wrt-#{tag}.pdf"
+        output = "#{local_directory}/#{output_file}"
         puts run_in_directory(
             local_directory,
             "git latexdiff #{tag}"\
@@ -65,7 +66,7 @@ for latex_root in latex_roots
             " -o #{output}"\
             " #{bibtex}"
         )
-        if $?.exitstatus == 0 then @successful << output end
+        if $?.exitstatus == 0 then @successful << output_file end
     end
 end
 File.open("#{directory}/#{output_log}", 'w+') do |file|
