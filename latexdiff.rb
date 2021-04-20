@@ -12,7 +12,10 @@ directory = ENV['DIRECTORY'] || ARGV[0] || '.'
 method = ENV['METHOD'] || 'CFONTCHBAR'
 output = ENV['OUTPUT'] || 'auto-latexdiff.log'
 builder = ENV['BUILD_COMMAND'] || 'latexmk'
+
 bibtex = ENV['BIB_TYPE'] || ''
+unless bibtex.empty? then bibtex = "--#{bibtex}" end
+
 supported_builders = ['latexmk', 'tectonic', 'lualatex', 'xelatex', 'pdflatex']
 unless supported_builders.include?(builder) then
     raise "Unknown build command '#{builder}'', expected one of: #{supported_builders}"
@@ -58,7 +61,8 @@ for latex_root in latex_roots
             ' --ignore-latex-errors --no-view --latexopt -shell-escape'\
             " -t #{method}"\
             " #{builder}"\
-            " -o #{output}"
+            " -o #{output}"\
+            " #{bibtex}"
         )
         if $?.exitstatus == 0 then @successful << file end
     end
