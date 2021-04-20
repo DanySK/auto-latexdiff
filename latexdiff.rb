@@ -66,7 +66,11 @@ for latex_root in latex_roots
             " -o #{output}"\
             " #{bibtex}"
         )
-        if $?.exitstatus == 0 then @successful << output_file end
+        if $?.exitstatus == 0 then
+            relative_directory = local_directory.gsub(directory, '')
+            relative_directory = /^\/?(.+)$/.match(relative_directory).captures[0]
+            @successful << "#{relative_directory}/#{file}"
+        end
     end
 end
 File.open("#{directory}/#{output_log}", 'w+') do |file|
