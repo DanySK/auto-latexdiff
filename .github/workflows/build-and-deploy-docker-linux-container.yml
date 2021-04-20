@@ -13,6 +13,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Fetch tags
+        shell: bash
+        run: git fetch --tags -f
       - name: Compute name
         env:
           SLUG: ${{ github.repository }}
