@@ -3,7 +3,7 @@ description: "Searches for LaTeX roots and builds differential documents via lat
 author: "Danilo Pianini"
 runs:
   using: "docker"
-  image: "docker://danysk/auto-latexdiff:0.1.4"
+  image: "docker://danysk/auto-latexdiff"
 branding:
   icon: 'book-open'
   color: 'green'
