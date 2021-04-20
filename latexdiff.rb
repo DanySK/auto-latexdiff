@@ -9,6 +9,7 @@ end
 
 test_installation_of('git latexdiff')
 directory = ENV['DIRECTORY'] || ARGV[0] || '.'
+directory = /^(.+?)\/?$/.match(directory).captures[0]
 method = ENV['METHOD'] || 'CFONTCHBAR'
 output_log = ENV['OUTPUT'] || 'auto-latexdiff.log'
 
@@ -48,14 +49,16 @@ puts latex_roots
 
 @successful = []
 for latex_root in latex_roots
-    local_directory, file = /(.*)\/(.*)$/.match(latex_root).captures
+    local_directory, file = /(.*\/)(.*)$/.match(latex_root).captures
+    relative_directory = local_directory.gsub(directory, '').gsub(/^\//, '')
+    puts "Relative directory #{relative_directory}"
     tags = run_in_directory(local_directory, 'git show-ref -d --tags | cut -b 42-')
         .split.select{ |it| it.end_with?('^{}')  }
         .map { |it| it.gsub(/^refs\/tags\/(.+)\^\{\}$/, '\1') }
     puts "detected tags #{tags} for file #{latex_root}"
     for tag in tags
         output_file = "#{file.gsub('.tex', '')}-wrt-#{tag}.pdf"
-        output = "#{local_directory}/#{output_file}"
+        output = "#{local_directory}#{output_file}"
         puts run_in_directory(
             local_directory,
             "git latexdiff #{tag}"\
@@ -67,9 +70,7 @@ for latex_root in latex_roots
             " #{bibtex}"
         )
         if $?.exitstatus == 0 then
-            relative_directory = local_directory.gsub(directory, '')
-            relative_directory = /^\/?(.+)$/.match(relative_directory).captures[0]
-            @successful << "#{relative_directory}/#{file}"
+            @successful << "#{relative_directory}#{output_file}"
         end
     end
 end
