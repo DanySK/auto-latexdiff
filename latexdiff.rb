@@ -51,7 +51,6 @@ puts latex_roots
 for latex_root in latex_roots
     local_directory, file = /(.*\/)(.*)$/.match(latex_root).captures
     relative_directory = local_directory.gsub(directory, '').gsub(/^\//, '')
-    puts "Relative directory #{relative_directory}"
     tags = run_in_directory(local_directory, 'git show-ref -d --tags | cut -b 42-')
         .split.select{ |it| it.end_with?('^{}')  }
         .map { |it| it.gsub(/^refs\/tags\/(.+)\^\{\}$/, '\1') }
