@@ -1,0 +1,9 @@
+name: "Auto-latexdiff"
+description: "Searches for LaTeX roots and builds differential documents via latexdiff comparing with previous tags."
+author: "Danilo Pianini"
+runs:
+  using: "docker"
+  image: "docker://danysk/auto-latexdiff"
+branding:
+  icon: 'book-open'
+  color: 'green'
