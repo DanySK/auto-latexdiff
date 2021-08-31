@@ -43,3 +43,10 @@ jobs:
       - name: Deploy Image
         if: ${{ github.event_name != 'pull_request' }}
         run: docker push --all-tags $IMAGE_NAME
+      - uses: ncipollo/release-action@v1
+        if: ${{ github.event_name != 'pull_request' }}
+        name: Create GitHub Release
+        with:
+          tag: ${{ env.VERSION }}
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
