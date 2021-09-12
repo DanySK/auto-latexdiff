@@ -1,4 +1,4 @@
-FROM danysk/docker-manjaro-texlive:25.20210908.1804
+FROM danysk/docker-manjaro-texlive:26.20210912.2136
 RUN yay-install ruby
 RUN yay-install rubygems
 ENV GEM_HOME=/rubygems/bin
