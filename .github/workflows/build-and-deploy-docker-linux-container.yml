@@ -28,6 +28,8 @@ jobs:
         run: |
           echo docker build -t "$IMAGE_NAME:latest" -t "$IMAGE_NAME:$VERSION" .
           docker build -t "$IMAGE_NAME:latest" -t "$IMAGE_NAME:$VERSION" .
+      - name: Run tests
+        run: ./test.rb
       - name: Login to Docker Hub
         if: github.event_name != 'pull_request' && contains(github.ref, 'master')
         env:
