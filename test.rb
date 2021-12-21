@@ -3,8 +3,9 @@ require 'json'
 puts `docker build -t test .`
 
 my_latex = [
-    'Course-Simulation-Basics',
-    'Curriculum-Vitae',
+    'Paper-2021-AppliedSoftComputing-Pulverization',
+    #'Course-Simulation-Basics',
+    # 'Curriculum-Vitae',
     # 'Template-ACM-Article',
     # 'Template-Elsevier-Article',
     # 'Template-Elsevier-CAS-DC',
