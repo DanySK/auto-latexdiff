@@ -19,29 +19,21 @@ end
 test_installation_of('latexdiff')
 
 # Bind arguments
-bibtex = ARGV[0] || 'default'
-if ['bibtex', 'biber'].include?(bibtex) then
-    bibtex = "--#{bibtex}"
-else
-    bibtex = ''
-end
+fail_on_error = (ARGV[0] || 'true').to_s == 'true'
 
-
-fail_on_error = (ARGV[1] || 'true').to_s == 'true'
-
-directory = ARGV[2] || '.'
+directory = ARGV[1] || '.'
 directory = /^(.+?)\/?$/.match(directory).captures[0]
 
-files = (ARGV[3] || '**/*.tex')
+files = (ARGV[2] || '**/*.tex')
     .split('/R')
     .flat_map{ |glob| Dir["#{directory}/#{glob}"] }
     .map { |name| name.gsub('//', '/') }
 puts "Files matching all patterns: #{files}"
 
-method = ARGV[4] || 'CFONTCHBAR'
+method = ARGV[3] || 'CFONTCHBAR'
 puts "Diff method: #{method}"
 
-use_magic_comments = (ARGV[5] || 'true').to_s.downcase == 'true'
+use_magic_comments = (ARGV[4] || 'true').to_s.downcase == 'true'
 if use_magic_comments then
     puts "Magic comment analysis started."
     magic_comment = /^\s*%\s*!\s*[Tt][Ee][Xx]\s*[Rr][Oo]{2}[Tt]\s*=\s*(.*?)\s*$/
@@ -73,8 +65,8 @@ def run_in_directory(directory, command)
     `
 end
 
-tag_filters = (ARGV[6] || '.*').split(/\R/).map { |regex| /#{regex}/ }
-include_lightweight = (ARGV[7] || 'false').to_s.downcase == 'true'
+tag_filters = (ARGV[5] || '.*').split(/\R/).map { |regex| /#{regex}/ }
+include_lightweight = (ARGV[6] || 'false').to_s.downcase == 'true'
 
 @successful = []
 

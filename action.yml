@@ -3,10 +3,6 @@ description: "Searches for LaTeX roots and builds differential documents via lat
 author: "Danilo Pianini"
 
 inputs:
-  bib-type:
-    description: If set, and pdflatex is selected, forces the execution of either bibtex or biber. Unset by default
-    required: false
-    default: 'default'
   directory:
     description: Where to search for LaTeX files. Defaults to the GitHub Actions workspace
     required: false
@@ -48,7 +44,6 @@ runs:
   using: "docker"
   image: "Dockerfile"
   args:
-    - ${{ inputs.bib-type }}
     - ${{ inputs.fail-on-error }}
     - ${{ inputs.directory }}
     - ${{ inputs.files }}
