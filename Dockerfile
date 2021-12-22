@@ -1,7 +1,4 @@
-FROM danysk/docker-manjaro-texlive:51.20211219.1441
-RUN yay-install ruby
-RUN yay-install rubygems
-ENV GEM_HOME=/rubygems/bin
-ENV PATH="$GEM_HOME:$PATH"
+FROM danysk/docker-manjaro-texlive-ruby:4.20211221.1727
 COPY latexdiff.rb /usr/bin/latexdiff.rb
-CMD [ "/usr/bin/latexdiff.rb", "/github/workspace/" ]
+RUN ruby -c /usr/bin/latexdiff.rb
+ENTRYPOINT [ "/usr/bin/latexdiff.rb" ]
