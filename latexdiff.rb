@@ -87,7 +87,6 @@ end
 for latex_root in files
     puts "Running on file #{latex_root}"
     local_directory, file = /(.*\/)(.*)$/.match(latex_root).captures
-    relative_directory = local_directory.gsub(directory, '').gsub(/^\//, '')
     tags = run_in_directory(local_directory, 'git show-ref -d --tags | cut -b 42-').split
         .map { |it| it.gsub(/^refs\/tags\/(.+)$/, '\1') }.uniq
     puts "Detected tags ('^{}' indicates annotated tags): #{tags}"
