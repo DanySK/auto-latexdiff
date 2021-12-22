@@ -79,7 +79,7 @@ end
 def ensure_success(operation, output)
     if $?.exitstatus != 0 then
         puts "ERROR in #{operation}:"
-        puts output.split(/\R/).map { |line| "#{operation}: " }.join("\n")
+        puts output.split(/\R/).map { |line| "#{operation}: #{line}" }.join("\n")
         exit $?.exitstatus
     end
 end
