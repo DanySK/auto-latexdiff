@@ -102,29 +102,34 @@ for latex_root in files
     tags = tags.select { |tag| tag_filters.any? { |filter| filter.match?(tag) } }
     puts "tag set finally reduced to #{tags}"
     for tag in tags
-        file_name = /^(.*?)(\.[\d\w]*)?$/.match(file)[1]
-        Dir.mktmpdir(["auto-latexdiff", file_name]) { |temp_dir|
-            puts "Created temporary directory => mkdir -p '#{temp_dir}'"
-            clone = run_in_directory(local_directory, "git clone . '#{temp_dir}'")
-            ensure_success("git clone", clone)
-            checkout = run_in_directory(temp_dir, "git checkout '#{tag}' .")
-            ensure_success("git checkout", checkout)
-            output_file = "#{file_name}-wrt-#{tag}.tex"
-            latexdiff = run_in_directory(
-                local_directory,
-                "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
-            )
-            puts "Latexdiff terminates with output: #{latexdiff}"
-            puts "chmod 666 '#{local_directory}#{output_file}'"
-            `chmod 666 '#{local_directory}#{output_file}'` # Container runs as root
-            puts "chmod 666 '#{local_directory}/#{output_file}'"
-            if $?.exitstatus != 0 then
-                puts "latexdiff failed with error code #{$?.exitstatus}"
-                if fail_on_error then
-                    ensure_success('latexdiff', latexdiff)
+        puts "::group::Producing diff for #{file}: ${tag} => current"
+        begin
+            file_name = /^(.*?)(\.[\d\w]*)?$/.match(file)[1]
+            Dir.mktmpdir(["auto-latexdiff", file_name]) { |temp_dir|
+                puts "Created temporary directory => mkdir -p '#{temp_dir}'"
+                clone = run_in_directory(local_directory, "git clone . '#{temp_dir}'")
+                ensure_success("git clone", clone)
+                checkout = run_in_directory(temp_dir, "git checkout '#{tag}' .")
+                ensure_success("git checkout", checkout)
+                output_file = "#{file_name}-wrt-#{tag}.tex"
+                latexdiff = run_in_directory(
+                    local_directory,
+                    "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
+                )
+                puts "Latexdiff terminates with output: #{latexdiff}"
+                puts "chmod 666 '#{local_directory}#{output_file}'"
+                `chmod 666 '#{local_directory}#{output_file}'` # Container runs as root
+                puts "chmod 666 '#{local_directory}/#{output_file}'"
+                if $?.exitstatus != 0 then
+                    puts "latexdiff failed with error code #{$?.exitstatus}"
+                    if fail_on_error then
+                        ensure_success('latexdiff', latexdiff)
+                    end
                 end
-            end
-        }
+            }
+        ensure
+            puts '::endgroup::'
+        end
     end
 end
 set_output()
