@@ -40,5 +40,7 @@ jobs:
           tags: |
             .*
           use-magic-comments: true
-    # Possibly other steps
+    # Possibly other steps, e.g.
+      - name: Compile LaTeX
+        uses: DanySK/compile-latex-action@0.3.57
 ```
