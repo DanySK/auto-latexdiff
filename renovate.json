@@ -2,5 +2,12 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>DanySK/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "description": "Updates to Dockerfile should trigger new releases",
+      "matchPaths": ["Dockerfile"],
+      "semanticCommitType": "fix"
+    }
   ]
 }

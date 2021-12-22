@@ -1,5 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'tmpdir'
+
+BEGIN { puts '::group::Auto LaTeX-diff Action' }
+END { puts '::endgroup::' }
+
 def test_installation_of(command, name = command)
     `#{command} --help`
     unless $?.exitstatus then
@@ -7,72 +12,123 @@ def test_installation_of(command, name = command)
     end
 end
 
-test_installation_of('git latexdiff')
-directory = ENV['DIRECTORY'] || ARGV[0] || '.'
-directory = /^(.+?)\/?$/.match(directory).captures[0]
-method = ENV['METHOD'] || 'CFONTCHBAR'
-output_log = ENV['OUTPUT'] || 'auto-latexdiff.log'
-
-builder = ENV['BUILD_COMMAND'] || 'latexmk'
-supported_builders = ['latexmk', 'tectonic', 'lualatex', 'xelatex', 'pdflatex']
-unless supported_builders.include?(builder) then
-    raise "Unknown build command '#{builder}'', expected one of: #{supported_builders}"
+def split_directory_and_file(file)
+    /(.*\/)(.*)$/.match(file).captures
 end
-test_installation_of(builder)
-builder = if builder == 'pdflatex' then '' else "--#{builder}" end
 
-bibtex = ENV['BIB_TYPE'] || ''
-unless bibtex.empty? then bibtex = "--#{bibtex}" end
+test_installation_of('latexdiff')
+
+# Bind arguments
+fail_on_error = (ARGV[0] || 'true').to_s == 'true'
+
+directory = ARGV[1] || '.'
+directory = /^(.+?)\/?$/.match(directory).captures[0]
+
+files = (ARGV[2] || '**/*.tex')
+    .split('/R')
+    .flat_map{ |glob| Dir["#{directory}/#{glob}"] }
+    .map { |name| name.gsub('//', '/') }
+puts "Files matching all patterns: #{files}"
+
+method = ARGV[3] || 'CFONTCHBAR'
+puts "Diff method: #{method}"
+
+use_magic_comments = (ARGV[4] || 'true').to_s.downcase == 'true'
+if use_magic_comments then
+    puts "Magic comment analysis started."
+    magic_comment = /^\s*%\s*!\s*[Tt][Ee][Xx]\s*[Rr][Oo]{2}[Tt]\s*=\s*(.*?)\s*$/
+    files = files.map { |file|
+        match = IO.readlines(file).lazy
+            .map { |line| line.match(magic_comment) }
+            .reject(&:nil?)
+            .first
+        if match.nil? then
+            puts "File #{file} has no magic comment and will be considered a root."
+            file
+        else
+            local_directory, _ = split_directory_and_file(file)
+            actual_root = "#{local_directory}#{match[1]}"
+            puts "File #{file} has a magic comment pointing to #{actual_root}"
+            actual_root
+        end
+    }.uniq.reject { |file_path| file_path.empty? }
+    puts "After analysis, the list of LaTeX roots is: #{files}"
+else 
+    puts "Magic comment analysis disabled."
+end
 
 def run_in_directory(directory, command)
-    puts "Running '#{command}' in '#{directory}'"
+    puts "Running => cd '#{directory}' && #{command}"
     `
     cd #{directory}
     #{command}
     `
 end
 
-latex_roots = Dir["#{directory}/**/*.tex"]
-    .map { |name| name.gsub('//', '/') }
-    .reject { |file|
-        IO.readlines(file).any? { |line|
-            begin
-                line =~ /^%\s*!\s*[Tt][Ee][Xx]\s*[Rr][Oo]{2}[Tt]\s*=.*$/
-            rescue ArgumentError
-                puts "Invalid line: #{line}"
-                false
-            end
-        }
-    }
-puts "The following LaTeX root files were found:"
-puts latex_roots
+tag_filters = (ARGV[5] || '.*').split(/\R/).map { |regex| /#{regex}/ }
+include_lightweight = (ARGV[6] || 'false').to_s.downcase == 'true'
 
 @successful = []
-for latex_root in latex_roots
+
+def set_output()
+    success_list = @successful.join('%0A') # See: https://github.community/t/set-output-truncates-multiline-strings/16852/3
+    puts "Setting output to: #{success_list}"
+    puts "::set-output name=results::#{success_list}"
+end
+
+def ensure_success(operation, output)
+    if $?.exitstatus != 0 then
+        puts "ERROR in #{operation}:"
+        puts output.split(/\R/).map { |line| "#{operation}: #{line}" }.join("\n")
+        exit $?.exitstatus
+    end
+end
+
+for latex_root in files
+    puts "Running on file #{latex_root}"
     local_directory, file = /(.*\/)(.*)$/.match(latex_root).captures
-    relative_directory = local_directory.gsub(directory, '').gsub(/^\//, '')
-    tags = run_in_directory(local_directory, 'git show-ref -d --tags | cut -b 42-')
-        .split.select{ |it| it.end_with?('^{}')  }
-        .map { |it| it.gsub(/^refs\/tags\/(.+)\^\{\}$/, '\1') }
-    puts "detected tags #{tags} for file #{latex_root}"
+    tags = run_in_directory(local_directory, 'git show-ref -d --tags | cut -b 42-').split
+        .map { |it| it.gsub(/^refs\/tags\/(.+)$/, '\1') }.uniq
+    puts "Detected tags ('^{}' indicates annotated tags): #{tags}"
+    if include_lightweight then
+        tags = tags.reject { |it| it.end_with?('^{}') }
+        puts "Lightweight tags enabled"
+    else
+        tags = tags.select { |it| it.end_with?('^{}') }.map { |it| it[0..-4]  }
+        puts "Lightweight tags disabled"
+    end
+    puts "tag set reduced to #{tags}, filtering patterns"
+    tags = tags.select { |tag| tag_filters.any? { |filter| filter.match?(tag) } }
+    puts "tag set finally reduced to #{tags}"
     for tag in tags
-        output_file = "#{file.gsub('.tex', '')}-wrt-#{tag}.pdf"
-        output = "#{local_directory}#{output_file}"
-        puts run_in_directory(
-            local_directory,
-            "git latexdiff #{tag}"\
-            " --main #{file}"\
-            ' --ignore-latex-errors --no-view --latexopt -shell-escape'\
-            " -t #{method}"\
-            " #{builder}"\
-            " -o #{output}"\
-            " #{bibtex}"
-        )
-        if $?.exitstatus == 0 then
-            @successful << "#{relative_directory}#{output_file}"
+        puts "::group::Producing diff for #{file}: ${tag} => current"
+        begin
+            file_name = /^(.*?)(\.[\d\w]*)?$/.match(file)[1]
+            Dir.mktmpdir(["auto-latexdiff", file_name]) { |temp_dir|
+                puts "Created temporary directory => mkdir -p '#{temp_dir}'"
+                clone = run_in_directory(local_directory, "git clone . '#{temp_dir}'")
+                ensure_success("git clone", clone)
+                checkout = run_in_directory(temp_dir, "git checkout '#{tag}' .")
+                ensure_success("git checkout", checkout)
+                output_file = "#{file_name}-wrt-#{tag}.tex"
+                latexdiff = run_in_directory(
+                    local_directory,
+                    "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
+                )
+                puts "Latexdiff terminates with output: #{latexdiff}"
+                puts "chmod 666 '#{local_directory}#{output_file}'"
+                `chmod 666 '#{local_directory}#{output_file}'` # Container runs as root
+                puts "chmod 666 '#{local_directory}/#{output_file}'"
+                if $?.exitstatus != 0 then
+                    puts "latexdiff failed with error code #{$?.exitstatus}"
+                    if fail_on_error then
+                        ensure_success('latexdiff', latexdiff)
+                    end
+                end
+            }
+        ensure
+            puts '::endgroup::'
         end
     end
 end
-File.open("#{directory}/#{output_log}", 'w+') do |file|
-    file.puts(@successful)
-end
+set_output()

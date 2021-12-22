@@ -1,9 +1,64 @@
 name: "Auto-latexdiff"
 description: "Searches for LaTeX roots and builds differential documents via latexdiff comparing with previous tags."
 author: "Danilo Pianini"
+
+inputs:
+  directory:
+    description: Where to search for LaTeX files. Defaults to the GitHub Actions workspace
+    required: false
+    default: '.'
+  fail-on-error:
+    description: Fail if latexdiff fails
+    required: false
+    default: true
+  files: 
+    description: >-
+      Latex files to compile, separated by newlines, relative to directory.
+      Glob syntax supported.
+      Defaults to '**/*.tex'
+    required: false
+    default: '**/*.tex'
+  include-lightweight-tags:
+    description: Whether non-annotated tags should be considered. Defaults to false.
+    required: false
+    default: false
+  markupstyle:
+    description: >-
+      Which differential method to use
+      (UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
+      CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT)
+    required: false
+    default: CFONTCHBAR
+  tags:
+    description: >-
+      Newline-separated list of tags to create differential documents with.
+      Regex syntax supported.
+      Defaults to '.*'
+    required: false
+    default: '.*'
+  use-magic-comments: 
+    description: >-
+      If enabled, the system will consider "TeX root" magic comments.
+      Enabled by default.
+    required: false
+    default: 'true'
+
 runs:
   using: "docker"
-  image: "docker://danysk/auto-latexdiff"
+  image: "Dockerfile"
+  args:
+    - ${{ inputs.fail-on-error }}
+    - ${{ inputs.directory }}
+    - ${{ inputs.files }}
+    - ${{ inputs.markupstyle }}
+    - ${{ inputs.use-magic-comments }}
+    - ${{ inputs.tags }}
+    - ${{ inputs.include-lightweight-tags }}
+
 branding:
   icon: 'book-open'
   color: 'green'
+
+outputs:
+  results:
+    description: 'A newline-separated list of successfuly compiled files'
