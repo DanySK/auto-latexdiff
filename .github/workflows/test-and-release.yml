@@ -11,10 +11,24 @@ jobs:
   test-IEEE-IoT:
     runs-on: ubuntu-latest
     steps:
+      - name: Compute test version
+        id: trick
+        shell: bash
+        run: |
+          # Idea: the regex matcher of Renovate keeps this string up to date automatically
+          # The version is extracted and used to access the correct version of the scripts
+          USES=$(cat <<TRICK_RENOVATE
+          - uses: DanySK/Paper-2021-AppliedSoftComputing-Pulverization@7392784f9d3b8804cda8a190c3d22ede082fbd5f
+          TRICK_RENOVATE
+          )
+          echo "Scripts update line: \"$USES\""
+          echo "Computed version: \"${USES#*@}\""
+          echo "::set-output name=version::${USES#*@}"
       - name: Checkout test
         uses: actions/checkout@v2.4.0
         with:
           repository: DanySK/Paper-2021-AppliedSoftComputing-Pulverization
+          ref: ${{ steps.trick.outputs.version }}
           path: test
           fetch-depth: 0
           token: ${{ secrets.AUTOMERGE_TOKEN }}
@@ -34,7 +48,7 @@ jobs:
       - name: Verify that the diff has been produced
         shell: bash
         run: |
-          [ -s test/paper*-ieee-iot-*-wrt-3.0.0.tex* ]
+          [ -s test/paper*-ieee-iot-*-wrt-3.0.0.tex ]
       - name: Debug prints
         shell: bash
         if: failure()
@@ -42,6 +56,10 @@ jobs:
           ls -ahl test
       - name: Compile LaTeX
         uses: DanySK/compile-latex-action@0.3.57
+      - name: Verify that the diff has been compiled
+        shell: bash
+        run: |
+          [ -s test/paper*-ieee-iot-*-wrt-3.0.0.pdf ]
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
