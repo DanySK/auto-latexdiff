@@ -7,7 +7,7 @@ This action produces differential tex documents by automatically searching for L
 No parameter is required (convention over configuration).
 
 | **Parameter**  | **Description**  | **Default**  |
-|---|---|---|---|---|
+|---|---|---|
 | `directory` | Where to search for LaTeX files | `GITHUB_WORKSPACE` |
 | `fail-on-error` | Fail if `latexdiff` fails | `true` |
 | `files` | Latex files (globs) to compile, separated by newlines, relative to directory | `**/*.tex` |
