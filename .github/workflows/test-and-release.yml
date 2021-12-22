@@ -34,7 +34,12 @@ jobs:
       - name: Verify that the diff has been produced
         shell: bash
         run: |
-          [ -s paper*-ieee-iot-*-wrt-3.0.0.tex* ]
+          [ -s test/paper*-ieee-iot-*-wrt-3.0.0.tex* ]
+      - name: Debug prints
+        shell: bash
+        if: failure()
+        run: |
+          ls -ahl test
       - name: Compile LaTeX
         uses: DanySK/compile-latex-action@0.3.57
   release:
