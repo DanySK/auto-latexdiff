@@ -6,7 +6,11 @@ on:
       - 'bump-**'
       - 'renovate/**'
   pull_request:
-    
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ruby-syntax:
     runs-on: ubuntu-latest
