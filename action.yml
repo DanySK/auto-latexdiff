@@ -8,7 +8,7 @@ inputs:
     required: false
     default: '.'
   fail-on-error:
-    description: Fail if the latexdiff fails
+    description: Fail if latexdiff fails
     required: false
     default: true
   files: 
@@ -22,8 +22,11 @@ inputs:
     description: Whether non-annotated tags should be considered. Defaults to false.
     required: false
     default: false
-  method:
-    description: Which differential method to use, defaults to CFONTCHBAR
+  markupstyle:
+    description: >-
+      Which differential method to use
+      (UNDERLINE CTRADITIONAL TRADITIONAL CFONT FONTSTRIKE INVISIBLE 
+      CHANGEBAR CCHANGEBAR CULINECHBAR CFONTCHBAR BOLD PDFCOMMENT)
     required: false
     default: CFONTCHBAR
   tags:
@@ -47,7 +50,7 @@ runs:
     - ${{ inputs.fail-on-error }}
     - ${{ inputs.directory }}
     - ${{ inputs.files }}
-    - ${{ inputs.method }}
+    - ${{ inputs.markupstyle }}
     - ${{ inputs.use-magic-comments }}
     - ${{ inputs.tags }}
     - ${{ inputs.include-lightweight-tags }}

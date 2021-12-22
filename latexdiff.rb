@@ -112,7 +112,7 @@ for latex_root in files
             output_file = "#{file_name}-wrt-#{tag}.tex"
             latexdiff = run_in_directory(
                 local_directory,
-                "latexdiff --flatten '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
+                "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
             )
             puts "Latexdiff terminates with output: #{latexdiff}"
             puts "chmod 666 '#{local_directory}#{output_file}'"
