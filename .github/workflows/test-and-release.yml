@@ -42,7 +42,7 @@ jobs:
           ref: ${{ steps.trick.outputs.version }}
           path: test
           fetch-depth: 0
-          token: ${{ secrets.WORKFLOW_TOKEN }}
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout action
         uses: actions/checkout@v2.4.0
         with:
@@ -84,5 +84,5 @@ jobs:
         run: npm install
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
         run: npx semantic-release
