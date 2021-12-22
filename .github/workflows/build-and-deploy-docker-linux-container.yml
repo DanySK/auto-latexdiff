@@ -32,6 +32,10 @@ jobs:
           files: paper*-ieee-iot-*.tex
           tags: |
             3.0.0
+      - name: Verify that the diff has been produced
+        shell: bash
+        run: |
+          [ -s paper*-ieee-iot-*-wrt-3.0.0.tex* ]
       - name: Compile LaTeX
         uses: DanySK/compile-latex-action@0.3.57
   Build-And-Deploy-Container:
