@@ -102,7 +102,7 @@ for latex_root in files
     tags = tags.select { |tag| tag_filters.any? { |filter| filter.match?(tag) } }
     puts "tag set finally reduced to #{tags}"
     for tag in tags
-        file_name = file[0..-5]
+        file_name = /^(.*?)(\.[\d\w]*)?$/.match(file)[1]
         Dir.mktmpdir(["auto-latexdiff", file_name]) { |temp_dir|
             puts "Created temporary directory => mkdir -p '#{temp_dir}'"
             clone = run_in_directory(local_directory, "git clone . '#{temp_dir}'")
