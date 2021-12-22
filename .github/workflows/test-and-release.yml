@@ -1,0 +1,53 @@
+name: Build container image and deploy on dockerhub
+on:
+  push:
+    branches-ignore:
+      - 'autodelivery**'
+      - 'bump-**'
+      - 'renovate/**'
+  pull_request:
+    
+jobs:
+  test-IEEE-IoT:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout test
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: DanySK/Paper-2021-AppliedSoftComputing-Pulverization
+          path: test
+          fetch-depth: 0
+          token: ${{ secrets.AUTOMERGE_TOKEN }}
+      - name: Checkout action
+        uses: actions/checkout@v2.4.0
+        with:
+          path: action
+      - name: Test
+        uses: ./action/
+        id: run
+        with:
+          directory: test
+          fail-on-error: true
+          files: paper*-ieee-iot-*.tex
+          tags: |
+            3.0.0
+      - name: Verify that the diff has been produced
+        shell: bash
+        run: |
+          [ -s paper*-ieee-iot-*-wrt-3.0.0.tex* ]
+      - name: Compile LaTeX
+        uses: DanySK/compile-latex-action@0.3.57
+  release:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    needs:
+      - test-IEEE-IoT
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.0
+      - name: Install Semantic Release
+        run: npm install
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
