@@ -16,6 +16,7 @@ jobs:
       - run: ruby -c *.rb
   test-IEEE-IoT:
     runs-on: ubuntu-latest
+    if: github.repository == 'DanySK/auto-latexdiff' && github.event_name == 'push'
     steps:
       - name: Compute test version
         id: trick
@@ -37,7 +38,7 @@ jobs:
           ref: ${{ steps.trick.outputs.version }}
           path: test
           fetch-depth: 0
-          token: ${{ secrets.AUTOMERGE_TOKEN }}
+          token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: Checkout action
         uses: actions/checkout@v2.4.0
         with:
