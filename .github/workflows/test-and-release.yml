@@ -44,7 +44,7 @@ jobs:
           fail-on-error: true
           files: paper*-ieee-iot-*.tex
           tags: |
-            3.0.0
+            3\.0\.0
       - name: Verify that the diff has been produced
         shell: bash
         run: |
