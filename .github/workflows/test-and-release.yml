@@ -8,6 +8,12 @@ on:
   pull_request:
     
 jobs:
+  ruby-syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout action
+        uses: actions/checkout@v2.4.0
+      - run: ruby -c *.rb
   test-IEEE-IoT:
     runs-on: ubuntu-latest
     steps:
@@ -64,6 +70,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     needs:
+      - ruby-syntax
       - test-IEEE-IoT
     steps:
       - name: Checkout
