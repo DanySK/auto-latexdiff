@@ -1,3 +1,10 @@
+## [63.0.1](https://github.com/DanySK/auto-latexdiff/compare/63.0.0...63.0.1) (2021-12-24)
+
+
+### Bug Fixes
+
+* **deps:** update danysk/docker-manjaro-texlive-ruby docker tag to v5 ([48cd679](https://github.com/DanySK/auto-latexdiff/commit/48cd6791d90826d04226c94ca1544db31e86a287))
+
 # [63.0.0](https://github.com/DanySK/auto-latexdiff/compare/62.20211219.1847...63.0.0) (2021-12-22)
 
 
