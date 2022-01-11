@@ -71,6 +71,58 @@ jobs:
         shell: bash
         run: |
           [ -s test/paper*-ieee-iot-*-wrt-3.0.0.pdf ]
+  test-TAAS-smartcam:
+    runs-on: ubuntu-latest
+    if: github.repository == 'DanySK/auto-latexdiff' && github.event_name == 'push'
+    steps:
+      - name: Compute test version
+        id: trick
+        shell: bash
+        run: |
+          USES=$(cat <<TRICK_RENOVATE
+          - uses: DanySK/Paper-2019-PMC-SmartCam@7b1972e2890e8cbc7dc970f75fe44c9cbc028395
+          TRICK_RENOVATE
+          )
+          echo "Scripts update line: \"$USES\""
+          echo "Computed version: \"${USES#*@}\""
+          echo "::set-output name=version::${USES#*@}"
+      - name: Checkout test
+        uses: actions/checkout@v2.4.0
+        with:
+          repository: DanySK/Paper-2019-PMC-SmartCam
+          ref: ${{ steps.trick.outputs.version }}
+          path: test
+          fetch-depth: 0
+          token: ${{ secrets.DEPLOYMENT_TOKEN }}
+      - name: Checkout action
+        uses: actions/checkout@v2.4.0
+        with:
+          path: action
+      - name: Test
+        uses: ./action/
+        id: run
+        with:
+          directory: test
+          fail-on-error: true
+          files: |
+            *paper*taas*.tex
+          tags: |
+            3\.1\.0
+      - name: Verify that the diff has been produced
+        shell: bash
+        run: |
+          [ -s test/*paper*taas*-wrt-3.1.0.tex ]
+      - name: Debug prints
+        shell: bash
+        if: failure()
+        run: |
+          ls -ahl test
+      - name: Compile LaTeX
+        uses: DanySK/compile-latex-action@0.3.69
+      - name: Verify that the diff has been compiled
+        shell: bash
+        run: |
+          [ -s test/*paper*taas*-wrt-3.1.0.pdf ]
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
