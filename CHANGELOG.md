@@ -1,3 +1,10 @@
+## [63.0.10](https://github.com/DanySK/auto-latexdiff/compare/63.0.9...63.0.10) (2022-01-11)
+
+
+### Bug Fixes
+
+* fix error with multi-line multiple globs ([fa984e9](https://github.com/DanySK/auto-latexdiff/commit/fa984e948f895fa9e1f286f1379c9f8b78a80f86))
+
 ## [63.0.9](https://github.com/DanySK/auto-latexdiff/compare/63.0.8...63.0.9) (2021-12-28)
 
 
