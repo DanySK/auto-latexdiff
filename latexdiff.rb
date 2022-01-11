@@ -116,10 +116,11 @@ for latex_root in files
                     "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
                 )
                 puts "Latexdiff terminates with output: #{latexdiff}"
-                puts "Remove magic comments included by flattening"
-                text = File.read(output_file)
+               destination = "#{local_directory}/#{output_file}"
+                puts "Remove magic comments included in #{destination} by flattening"
+                text = File.read(destination)
                 filtered_contents = text.gsub(/%\s*[tT][eE][xX]\s*[rR][oO]{2}[tT]\s*=\s*/, '%')
-                File.open(output_file, "w") {|file| file.puts filtered_contents }
+                File.open(destination, "w") {|file| file.puts filtered_contents }
                 puts "chmod 666 '#{local_directory}#{output_file}'"
                 `chmod 666 '#{local_directory}#{output_file}'` # Container runs as root
                 if $?.exitstatus != 0 then
