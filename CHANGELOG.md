@@ -1,3 +1,10 @@
+## [63.0.11](https://github.com/DanySK/auto-latexdiff/compare/63.0.10...63.0.11) (2022-01-11)
+
+
+### Bug Fixes
+
+* use the complete path for reading the file ([9dc2689](https://github.com/DanySK/auto-latexdiff/commit/9dc2689f87fb38f039aba9343919a00dc4078561))
+
 ## [63.0.10](https://github.com/DanySK/auto-latexdiff/compare/63.0.9...63.0.10) (2022-01-11)
 
 
