@@ -1,3 +1,14 @@
+## [64.0.0](https://github.com/DanySK/auto-latexdiff/compare/63.0.11...64.0.0) (2022-01-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **release:** use semantic-release-preconfigured-conventional-commits
+
+### Build and continuous integration
+
+* **release:** use semantic-release-preconfigured-conventional-commits ([961b713](https://github.com/DanySK/auto-latexdiff/commit/961b7139040fb7d33acf89469feddff135b9f017))
+
 ## [63.0.11](https://github.com/DanySK/auto-latexdiff/compare/63.0.10...63.0.11) (2022-01-11)
 
 
