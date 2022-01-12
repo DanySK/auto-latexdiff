@@ -48,9 +48,9 @@ method = ARGV[3] || 'CFONTCHBAR'
 puts "Diff method: #{method}"
 
 use_magic_comments = (ARGV[4] || 'true').to_s.downcase == 'true'
+magic_comment = /^\s*%\s*!\s*[Tt][Ee][Xx]\s*[Rr][Oo]{2}[Tt]\s*=\s*(.*?)\s*$/
 if use_magic_comments then
     puts "Magic comment analysis started."
-    magic_comment = /^\s*%\s*!\s*[Tt][Ee][Xx]\s*[Rr][Oo]{2}[Tt]\s*=\s*(.*?)\s*$/
     files = files.map { |file|
         match = IO.readlines(file).lazy
             .map { |line| line.match(magic_comment) }
@@ -130,13 +130,15 @@ for latex_root in files
                     "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
                 )
                 puts "Latexdiff terminates with output: #{latexdiff}"
-               destination = "#{local_directory}#{output_file}"
-                puts "Remove magic comments included in #{destination} by flattening"
-                text = File.read(destination)
-                filtered_contents = text.gsub(/%\s*[tT][eE][xX]\s*[rR][oO]{2}[tT]\s*=\s*/, '%')
-                File.open(destination, "w") {|file| file.puts filtered_contents }
-                puts "chmod 666 '#{local_directory}#{output_file}'"
-                `chmod 666 '#{local_directory}#{output_file}'` # Container runs as root
+                destination = "#{local_directory}#{output_file}"
+                if use_magic_comments then
+                    puts "Remove magic comments included in #{destination} by flattening"
+                    text = File.read(destination)
+                    filtered_contents = text.gsub(magic_comment, '% <redacted magic comment pointing the root to \1>')
+                    File.open(destination, "w") {|file| file.puts filtered_contents }
+                end
+                puts "chmod 666 '#{destination}'"
+                `chmod 666 '#{destination}'` # Container runs as root
                 if $?.exitstatus != 0 then
                     puts "latexdiff failed with error code #{$?.exitstatus}"
                     if fail_on_error then
