@@ -2,11 +2,21 @@
 
 require 'tmpdir'
 
-BEGIN { puts '::group::Auto LaTeX-diff Action' }
-END { puts '::endgroup::' }
+def group(name)
+    puts "::group::#{name}"
+end
+
+def endgroup
+    puts '::endgroup::'
+end
+
+BEGIN { group('Auto LaTeX-diff Action') }
+END { endgroup }
 
 def test_installation_of(command, name = command)
+    group("Test availability of #{command}")
     `#{command} --help`
+    endgroup
     unless $?.exitstatus then
         raise "'#{name}' is not installed in the local system, cannot continue."
     end
@@ -116,7 +126,7 @@ for latex_root in files
                     "latexdiff --flatten -t '#{method}' '#{temp_dir}/#{file}' '#{file}' 2>&1 > '#{output_file}'",
                 )
                 puts "Latexdiff terminates with output: #{latexdiff}"
-               destination = "#{local_directory}/#{output_file}"
+               destination = "#{local_directory}#{output_file}"
                 puts "Remove magic comments included in #{destination} by flattening"
                 text = File.read(destination)
                 filtered_contents = text.gsub(/%\s*[tT][eE][xX]\s*[rR][oO]{2}[tT]\s*=\s*/, '%')
