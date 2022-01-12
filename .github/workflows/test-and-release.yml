@@ -74,7 +74,7 @@ jobs:
       - name: Compute diff on TAAS
         uses: ./action/
         with:
-          directory: test
+          directory: taas
           fail-on-error: true
           files: |
             *paper*taas*.tex
