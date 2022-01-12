@@ -98,8 +98,8 @@ jobs:
       - name: Verify that the diffs have been compiled
         shell: bash
         run: |
-          [ -s ieee/paper*-ieee-iot-*-wrt-3.0.0.pdf ]
-          [ -s taas/*paper*taas*-wrt-3.1.0.pdf ]
+          [ -s ieee/paper*-ieee-iot-*-wrt-3.0.0.pdf ] || (cat ieee/paper*-ieee-iot-*-wrt-3.0.0.tex; exit 1)
+          [ -s taas/*paper*taas*-wrt-3.1.0.pdf ] || (cat taas/*paper*taas*-wrt-3.1.0.tex; exit 1)
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
