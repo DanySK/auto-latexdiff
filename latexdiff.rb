@@ -2,15 +2,17 @@
 
 require 'tmpdir'
 
-def group(name)
-    puts "::group::#{name}"
-end
-
-def endgroup
-    puts '::endgroup::'
-end
-
-BEGIN { group('Auto LaTeX-diff Action') }
+BEGIN {
+    def group(name)
+        puts "::group::#{name}"
+    end
+    
+    def endgroup
+        puts '::endgroup::'
+    end
+    
+    group('Auto LaTeX-diff Action')
+}
 END { endgroup }
 
 def test_installation_of(command, name = command)
