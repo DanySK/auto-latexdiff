@@ -18,7 +18,7 @@ jobs:
       - name: Checkout action
         uses: actions/checkout@v2.4.0
       - run: ruby -c *.rb
-  test-IEEE-IoT:
+  tests:
     runs-on: ubuntu-latest
     if: github.repository == 'DanySK/auto-latexdiff' && github.event_name == 'push'
     steps:
@@ -28,77 +28,51 @@ jobs:
         run: |
           # Idea: the regex matcher of Renovate keeps this string up to date automatically
           # The version is extracted and used to access the correct version of the scripts
-          USES=$(cat <<TRICK_RENOVATE
+          IEEE=$(cat <<TRICK_RENOVATE
           - uses: DanySK/Paper-2021-AppliedSoftComputing-Pulverization@4bb3998f6d90124d81348c7f96e0d1b5d5c29854
           TRICK_RENOVATE
           )
-          echo "Scripts update line: \"$USES\""
-          echo "Computed version: \"${USES#*@}\""
-          echo "::set-output name=version::${USES#*@}"
+          TAAS=$(cat <<TRICK_RENOVATE
+          - uses: DanySK/Paper-2019-PMC-SmartCam@7b1972e2890e8cbc7dc970f75fe44c9cbc028395
+          TRICK_RENOVATE
+          )
+
+          echo "IEEE update line: \"$IEEE\""
+          echo "TAAS update line: \"$TAAS\""
+          echo "Computed version for IEEE: \"${IEEE#*@}\""
+          echo "Computed version for TAAS: \"${TAAS#*@}\""
+          echo "::set-output name=ieee-version::${IEEE#*@}"
+          echo "::set-output name=taas-version::${TAAS#*@}"
       - name: Checkout test
         uses: actions/checkout@v2.4.0
         with:
           repository: DanySK/Paper-2021-AppliedSoftComputing-Pulverization
-          ref: ${{ steps.trick.outputs.version }}
-          path: test
+          ref: ${{ steps.trick.outputs.ieee-version }}
+          path: ieee
           fetch-depth: 0
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
-      - name: Checkout action
-        uses: actions/checkout@v2.4.0
-        with:
-          path: action
-      - name: Test
-        uses: ./action/
-        id: run
-        with:
-          directory: test
-          fail-on-error: true
-          files: paper*-ieee-iot-*.tex
-          tags: |
-            3\.0\.0
-      - name: Verify that the diff has been produced
-        shell: bash
-        run: |
-          [ -s test/paper*-ieee-iot-*-wrt-3.0.0.tex ]
-      - name: Debug prints
-        shell: bash
-        if: failure()
-        run: |
-          ls -ahl test
-      - name: Compile LaTeX
-        uses: DanySK/compile-latex-action@0.3.69
-      - name: Verify that the diff has been compiled
-        shell: bash
-        run: |
-          [ -s test/paper*-ieee-iot-*-wrt-3.0.0.pdf ]
-  test-TAAS-smartcam:
-    runs-on: ubuntu-latest
-    if: github.repository == 'DanySK/auto-latexdiff' && github.event_name == 'push'
-    steps:
-      - name: Compute test version
-        id: trick
-        shell: bash
-        run: |
-          USES=$(cat <<TRICK_RENOVATE
-          - uses: DanySK/Paper-2019-PMC-SmartCam@7b1972e2890e8cbc7dc970f75fe44c9cbc028395
-          TRICK_RENOVATE
-          )
-          echo "Scripts update line: \"$USES\""
-          echo "Computed version: \"${USES#*@}\""
-          echo "::set-output name=version::${USES#*@}"
       - name: Checkout test
         uses: actions/checkout@v2.4.0
         with:
           repository: DanySK/Paper-2019-PMC-SmartCam
-          ref: ${{ steps.trick.outputs.version }}
-          path: test
+          ref: ${{ steps.trick.outputs.taas-version }}
+          path: taas
           fetch-depth: 0
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout action
         uses: actions/checkout@v2.4.0
         with:
           path: action
-      - name: Test
+      - name: Compute diff on IEEE
+        uses: ./action/
+        id: run
+        with:
+          directory: ieee
+          fail-on-error: true
+          files: paper*-ieee-iot-*.tex
+          tags: |
+            3\.0\.0
+      - name: Compute diff on TAAS
         uses: ./action/
         id: run
         with:
@@ -108,28 +82,30 @@ jobs:
             *paper*taas*.tex
           tags: |
             3\.1\.0
-      - name: Verify that the diff has been produced
+      - name: Verify that the diffs have been produced
         shell: bash
         run: |
-          [ -s test/*paper*taas*-wrt-3.1.0.tex ]
+          [ -s ieee/paper*-ieee-iot-*-wrt-3.0.0.tex ]
+          [ -s taas/*paper*taas*-wrt-3.1.0.tex ]
       - name: Debug prints
         shell: bash
         if: failure()
         run: |
-          ls -ahl test
+          ls -ahl ieee
+          ls -ahl taas
       - name: Compile LaTeX
         uses: DanySK/compile-latex-action@0.3.69
-      - name: Verify that the diff has been compiled
+      - name: Verify that the diffs have been compiled
         shell: bash
         run: |
-          [ -s test/*paper*taas*-wrt-3.1.0.pdf ]
+          [ -s ieee/paper*-ieee-iot-*-wrt-3.0.0.pdf ]
+          [ -s taas/*paper*taas*-wrt-3.1.0.pdf ]
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     needs:
       - ruby-syntax
-      - test-IEEE-IoT
-      - test-TAAS-smartcam
+      - test
     steps:
       - name: Checkout
         uses: actions/checkout@v2.4.0
