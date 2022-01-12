@@ -103,7 +103,7 @@ jobs:
     if: github.event_name == 'push'
     needs:
       - ruby-syntax
-      - test
+      - tests
     steps:
       - name: Checkout
         uses: actions/checkout@v2.4.0
