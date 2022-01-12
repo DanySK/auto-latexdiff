@@ -35,7 +35,8 @@ directory = ARGV[1] || '.'
 directory = /^(.+?)\/?$/.match(directory).captures[0]
 
 files = (ARGV[2] || '**/*.tex')
-    .split(/\R/)
+puts "Provided file patterns:\n#{files}"
+files = files.split(/\R/)
     .flat_map{ |glob| Dir["#{directory}/#{glob}"] }
     .map { |name| name.gsub('//', '/') }
 puts "Files matching all patterns: #{files}"
