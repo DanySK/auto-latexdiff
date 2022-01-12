@@ -1,3 +1,43 @@
+## [64.1.0](https://github.com/DanySK/auto-latexdiff/compare/64.0.0...64.1.0) (2022-01-12)
+
+
+### Features
+
+* improve console logging and grouping ([90e92c0](https://github.com/DanySK/auto-latexdiff/commit/90e92c02200194641f62a00414d4435bc0e486ea))
+
+
+### Bug Fixes
+
+* add debug print ([eaef8e1](https://github.com/DanySK/auto-latexdiff/commit/eaef8e1fe25dd00cb2a7d5b84bda2cef5c6fd5f1))
+* add debug print ([4ee3396](https://github.com/DanySK/auto-latexdiff/commit/4ee3396d4fd7e0fc857e00582cec566afd827c3d))
+* redact magic comments out of the produced diff ([7df2af4](https://github.com/DanySK/auto-latexdiff/commit/7df2af49b2e8534a622e07fcff4e8f8cad984ed4))
+
+
+### Tests
+
+* add test with Paper-2019-PMC-SmartCam ([231c71e](https://github.com/DanySK/auto-latexdiff/commit/231c71e3798eb95a16aed1fba3fa4304a4172a66))
+
+
+### Refactoring
+
+* move print grouping methods in BEGIN ([f96d826](https://github.com/DanySK/auto-latexdiff/commit/f96d826e32229c45272b557a2f521e3cbfbcf4dc))
+
+
+### General maintenance
+
+* try a more complex workflow in local tests [skip ci] ([392f351](https://github.com/DanySK/auto-latexdiff/commit/392f35103099f135fa0a598f7a5884aa985a96a3))
+
+
+### Build and continuous integration
+
+* fix broken job name ([8de8a1d](https://github.com/DanySK/auto-latexdiff/commit/8de8a1d0fbbd3e8cbe09ed726b1c776284c29465))
+* log upon failure ([c3edb2b](https://github.com/DanySK/auto-latexdiff/commit/c3edb2b9a3e0ad67a0930655a11a91d7e89504c6))
+* remove unused step id ([bd733f7](https://github.com/DanySK/auto-latexdiff/commit/bd733f7d009edc008d5038073c3b5ae94a2b0f6a))
+* require new test to pass prior to release ([3d06c3f](https://github.com/DanySK/auto-latexdiff/commit/3d06c3fbdf554799845826f79de577a2615db9b7))
+* run diff test inside the taas directory ([cdc8f15](https://github.com/DanySK/auto-latexdiff/commit/cdc8f153fde4fde4e095b811d157cf86e7dfd56a))
+* unify the tests ([d8fb88a](https://github.com/DanySK/auto-latexdiff/commit/d8fb88ae55d723c751462ff89543f34572d524ff))
+* update the latex compile action ([fe1b657](https://github.com/DanySK/auto-latexdiff/commit/fe1b6572f8db47881f0222b38e51867c99e2dd66))
+
 ## [64.0.0](https://github.com/DanySK/auto-latexdiff/compare/63.0.11...64.0.0) (2022-01-11)
 
 
