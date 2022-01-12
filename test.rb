@@ -4,7 +4,7 @@ puts `docker build -t test .`
 
 my_latex = [
     'Paper-2021-AppliedSoftComputing-Pulverization',
-    #'Course-Simulation-Basics',
+    'Paper-2019-PMC-SmartCam',
     # 'Curriculum-Vitae',
     # 'Template-ACM-Article',
     # 'Template-Elsevier-Article',
@@ -27,5 +27,5 @@ index = 0
 for repo in repos do
     `git clone --recurse-submodules #{repo} test/test-#{index += 1}`
 end
-puts `docker run --rm --workdir="/github/workspace" -v "$(pwd)/test":/github/workspace:rw test`
+puts `docker run --rm --workdir="/github/workspace" -v "$(pwd)/test":/github/workspace:rw test "true" "." "**/paper*-taas-*.tex" "CFONTCHBAR" "true" "3\.1\.0" "false"`
 exit $?.exitstatus
