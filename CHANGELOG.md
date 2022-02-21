@@ -1,3 +1,17 @@
+### [64.1.1](https://github.com/DanySK/auto-latexdiff/compare/64.1.0...64.1.1) (2022-02-21)
+
+
+### Bug Fixes
+
+* **deps:** update dependency danysk/docker-manjaro-texlive-ruby to v15 ([37b1cd1](https://github.com/DanySK/auto-latexdiff/commit/37b1cd1e6046604b777646c19dc7711ec37042a9))
+
+
+### Dependency updates
+
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.4 ([b1b8daa](https://github.com/DanySK/auto-latexdiff/commit/b1b8daa8476fb7d052b69e9117b9fc9dde86b093))
+* **deps:** update dependency semantic-release-preconfigured-conventional-commits to v1.1.5 ([033db1c](https://github.com/DanySK/auto-latexdiff/commit/033db1ca87b54c52787f5dcfed7dfb530ee3be95))
+* **deps:** update node.js to 16.14 ([5b221d1](https://github.com/DanySK/auto-latexdiff/commit/5b221d142cc9af88d8eb1efd691e34a98583656b))
+
 ## [64.1.0](https://github.com/DanySK/auto-latexdiff/compare/64.0.0...64.1.0) (2022-01-12)
 
 
