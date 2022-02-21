@@ -1,4 +1,4 @@
-FROM danysk/docker-manjaro-texlive-ruby:14.20211228.1640
+FROM danysk/docker-manjaro-texlive-ruby:15.0.10
 COPY latexdiff.rb /usr/bin/latexdiff.rb
 RUN ruby -c /usr/bin/latexdiff.rb
 ENTRYPOINT [ "/usr/bin/latexdiff.rb" ]
