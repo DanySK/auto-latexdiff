@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout action
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - run: ruby -c *.rb
   tests:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
           echo "::set-output name=ieee-version::${IEEE#*@}"
           echo "::set-output name=taas-version::${TAAS#*@}"
       - name: Checkout test
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
         with:
           repository: DanySK/Paper-2021-AppliedSoftComputing-Pulverization
           ref: ${{ steps.trick.outputs.ieee-version }}
@@ -52,7 +52,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout test
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
         with:
           repository: DanySK/Paper-2019-PMC-SmartCam
           ref: ${{ steps.trick.outputs.taas-version }}
@@ -60,7 +60,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout action
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
         with:
           path: action
       - name: Compute diff on IEEE
@@ -106,7 +106,7 @@ jobs:
       - tests
     steps:
       - name: Checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3.4.0
       - name: Install Semantic Release
         run: npm install
       - name: Release
