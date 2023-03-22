@@ -29,7 +29,7 @@ jobs:
           # Idea: the regex matcher of Renovate keeps this string up to date automatically
           # The version is extracted and used to access the correct version of the scripts
           IEEE=$(cat <<TRICK_RENOVATE
-          - uses: DanySK/Paper-2021-AppliedSoftComputing-Pulverization@4bb3998f6d90124d81348c7f96e0d1b5d5c29854
+          - uses: DanySK/Paper-2021-AppliedSoftComputing-Pulverization@d12cd7e6b9ce8a4e4dc201f517d122fdd20fdba2
           TRICK_RENOVATE
           )
           TAAS=$(cat <<TRICK_RENOVATE
