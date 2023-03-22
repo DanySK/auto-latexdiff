@@ -92,7 +92,7 @@ jobs:
           ls -ahl ieee
           ls -ahl taas
       - name: Compile LaTeX
-        uses: DanySK/compile-latex-action@0.3.107
+        uses: DanySK/compile-latex-action@0.3.108
       - name: Verify that the diffs have been compiled
         shell: bash
         run: |
