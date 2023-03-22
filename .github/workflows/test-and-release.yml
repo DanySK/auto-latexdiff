@@ -33,7 +33,7 @@ jobs:
           TRICK_RENOVATE
           )
           TAAS=$(cat <<TRICK_RENOVATE
-          - uses: DanySK/Paper-2019-PMC-SmartCam@7b1972e2890e8cbc7dc970f75fe44c9cbc028395
+          - uses: DanySK/Paper-2019-PMC-SmartCam@c49d1e0b1d12fc42992bf4aaf7cec5f58bdd3949
           TRICK_RENOVATE
           )
 
