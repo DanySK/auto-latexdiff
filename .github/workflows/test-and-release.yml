@@ -66,6 +66,7 @@ jobs:
           ref: ${{ steps.trick.outputs.ieee-version }}
           path: ieee
           fetch-depth: 0
+          fetch-tags: true
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout test
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -74,6 +75,7 @@ jobs:
           ref: ${{ steps.trick.outputs.taas-version }}
           path: taas
           fetch-depth: 0
+          fetch-tags: true
           token: ${{ secrets.DEPLOYMENT_TOKEN }}
       - name: Checkout action
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
