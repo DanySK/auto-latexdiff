@@ -98,18 +98,60 @@ jobs:
         run: |
           [ -s ieee/paper*-ieee-iot-*-wrt-3.0.0.pdf ] || (cat ieee/paper*-ieee-iot-*-wrt-3.0.0.tex; exit 1)
           [ -s taas/*paper*taas*-wrt-3.1.0.pdf ] || (cat taas/*paper*taas*-wrt-3.1.0.tex; exit 1)
+  build-container:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cache Docker images
+        uses: ScribeMD/docker-cache@0.3.7
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('Dockerfile', 'latexdiff.rb') }}
+      - name: Checkout
+        uses: actions/checkout@v4.1.1
+      - name: Build the container
+        run: docker build -t danysk/auto-latexdiff .
   release:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     needs:
+      - build-container
       - ruby-syntax
       - tests
     steps:
+      - name: Cache Docker images
+        uses: ScribeMD/docker-cache@0.3.7
+        with:
+          key: docker-${{ runner.os }}-${{ hashFiles('Dockerfile', 'latexdiff.rb') }}
       - name: Checkout
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Find if secrets are available
+        uses: DanySK/are-secrets-available@1.0.0
+        id: secrets
+        with:
+          secrets: ${{ toJson(secrets) }}
       - name: Install Semantic Release
         run: npm install
+      - name: Login to Docker Hub
+        if: steps.secrets.outputs.has-secrets
+        uses: docker/login-action@v3.0.0
+        with:
+          username: danysk
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_TOKEN }}
         run: npx semantic-release
+  success:
+    runs-on: ubuntu-22.04
+    needs:
+      - build-container
+      - release
+      - ruby-syntax
+      - tests
+    if: >-
+      always() && (
+        contains(join(needs.*.result, ','), 'failure')
+        || !contains(join(needs.*.result, ','), 'cancelled')
+      )
+    steps:
+      - name: Verify that there were no failures
+        run: ${{ !contains(join(needs.*.result, ','), 'failure') }}
