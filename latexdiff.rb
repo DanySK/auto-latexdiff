@@ -49,14 +49,15 @@ puts "Diff method: #{method}"
 
 use_magic_comments = (ARGV[4] || 'true').to_s.downcase == 'true'
 magic_comment = /^\s*%\s*!\s*[Tt][Ee][Xx]\s*[Rr][Oo]{2}[Tt]\s*=\s*(.*?)\s*$/
-if use_magic_comments then
+if use_magic_comments
     puts "Magic comment analysis started."
     files = files.map { |file|
+        puts "Analyzing file #{file}"
         match = IO.readlines(file).lazy
             .map { |line| line.match(magic_comment) }
             .reject(&:nil?)
             .first
-        if match.nil? then
+        if match.nil?
             puts "File #{file} has no magic comment and will be considered a root."
             file
         else
