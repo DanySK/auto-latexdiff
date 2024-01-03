@@ -18,9 +18,21 @@ jobs:
       - name: Checkout action
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - run: ruby -c *.rb
-  tests:
+  check-secrets:
     runs-on: ubuntu-latest
-    if: github.repository == 'DanySK/auto-latexdiff' && github.event_name == 'push'
+    outputs:
+        has-secrets: ${{ steps.secrets.outputs.has-secrets }}
+    steps:
+        - name: Find if secrets are available
+          uses: DanySK/are-secrets-available@1.0.0
+          id: secrets
+          with:
+            secrets: ${{ toJson(secrets) }}
+  tests:
+    needs:
+      - check-secrets
+    runs-on: ubuntu-latest
+    if:  github.repository == 'DanySK/auto-latexdiff' && needs.check-secrets.outputs.has-secrets
     steps:
       - name: Cache Docker images
         uses: ScribeMD/docker-cache@0.3.7
